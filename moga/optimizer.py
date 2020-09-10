@@ -1,20 +1,24 @@
-import numpy as np
 from .chromosome import BinaryChromosome
 from .generation import Fronting
+import numpy as np
+import time
 
 
 class ParetoOptimizer(object):
     # generation_list - chromosome, objective value
-    def __init__(self, generation_generator, generic_parameter_dict):
+    def __init__(self):
         self.num_chromosome_in_generation = 50
         self.max_generation = 10
         self.num_objective = 2
+        self.generation_list = []
+        self.time_measure_list = []
+        Fronting.num_objective = self.num_objective
+
+    def set_generation_generator(self, generation_generator):
         self.generation_generator = generation_generator
+        self.generic_parameter_dict = generation_generator.generic_parameter_dict
         self.objective_function = generation_generator.fitness_func
         self.local_algorithm = generation_generator.local_algorithm_enum
-        self.generic_parameter_dict = generic_parameter_dict
-        self.generation_list = []
-        Fronting.num_objective = self.num_objective
 
     def setting(self, num_chromosome_in_generation=50, max_generation=10, num_objective=2):
         self.num_chromosome_in_generation = num_chromosome_in_generation
@@ -24,8 +28,10 @@ class ParetoOptimizer(object):
     def optimize(self):
         self.initialization()
         for idx in range(0, self.max_generation):
+            start_time = time.time()
             print(idx)
             self.next_generation()
+            self.time_measure_list.append(time.time()-start_time)
 
     def initialization(self):
         num = self.num_chromosome_in_generation

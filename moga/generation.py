@@ -57,7 +57,6 @@ class Fronting(object):
         for chromosome, objective_values in generation:
             not_fronted_chromosome_list.append((chromosome, objective_values))
         while len(not_fronted_chromosome_list) > 0:
-            print(len(not_fronted_chromosome_list), end=', ')
             new_front = []
             for chromosome_1, objective_1 in not_fronted_chromosome_list:
                 num_dominates = 0
@@ -71,7 +70,6 @@ class Fronting(object):
             for chromosome_1, objective_1 in new_front:
                 not_fronted_chromosome_list.remove((chromosome_1, objective_1))
             cls.front_list.append(new_front)
-        print()
 
     @classmethod
     def __crowd_distancing_in_the_front(cls, front, remained_num):
@@ -109,24 +107,38 @@ def fill_chromosome_list(func):
         while len(chromosome_list) < num_chromosome:
             new_chromosome = func(*args)
             new_chromosome, objective_values = local_algorithm(new_chromosome, fitness_func)
-            if new_chromosome not in new_generation_list and new_chromosome not in chromosome_list:
-                chromosome_info_list.append((new_chromosome, objective_values))
-                chromosome_list.append(new_chromosome)
+            if new_chromosome in new_generation_list:
+                continue
+            if new_chromosome in chromosome_list:
+                continue
+            if not BinaryChromosome.chromosome_fitted_in_geno_space(new_chromosome):
+                continue
+            chromosome_info_list.append((new_chromosome, objective_values))
+            chromosome_list.append(new_chromosome)
         return chromosome_info_list
     return wrapper_function
 
 
 class MultiObjectiveGenerator(object):
 
-    def __init__(self, fitness_func, generic_parameter_dict):
+    def __init__(self):
+        self.fitness_func = None
+        self.generic_parameter_dict = None
         self.__local_algorithm_enum = BinaryLocalAlgorithm.NONE
-        self.fitness_func = fitness_func
-        self.generic_parameter_dict = generic_parameter_dict
-        self.__check_generic_parameter()
         self.generation = np.array([])
+
+    def set_fitness_func(self, func):
+        self.fitness_func = func
+
+    def set_generic_parameter_dict(self, generic_parameter_dict):
+        self.generic_parameter_dict = generic_parameter_dict
 
     def set_generation(self, generation):
         self.generation = generation
+
+    def check_generic_parameter(self):
+        if sum(list(self.generic_parameter_dict.values())) != 1:
+            raise HyperParameterSettingError
 
     @property
     def local_algorithm_enum(self):
@@ -179,10 +191,6 @@ class MultiObjectiveGenerator(object):
     def __get_random_chromosome(self):
         random_idx = random.randint(0, len(self.generation)-1)
         return self.generation[random_idx][0]
-
-    def __check_generic_parameter(self):
-        if sum(list(self.generic_parameter_dict.values())) != 1:
-            raise HyperParameterSettingError
 
 
 class MultiObjGenericEnum(Enum):

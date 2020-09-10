@@ -38,6 +38,7 @@ class BinaryChromosome(object):
     geno_shape = {}
     geno_position = {}
     len_str_chromosome = 0
+    fitted_in_geno_func_list = []
 
     @classmethod
     def get_random_chromosome_from_geno_shape(cls, num_chromosome=1):
@@ -45,7 +46,8 @@ class BinaryChromosome(object):
         for chromosome_idx in range(0, num_chromosome):
             while len(chromosome_list) < num_chromosome:
                 chromosome_str = cls.get_random_chromosome()
-                if chromosome_str not in chromosome_list:
+                fitted = cls.chromosome_fitted_in_geno_space(chromosome_str)
+                if chromosome_str not in chromosome_list and fitted:
                     chromosome_list.append(chromosome_str)
 
         return chromosome_list
@@ -145,6 +147,13 @@ class BinaryChromosome(object):
                     break
             if breaker:
                 break
+
+        for func in cls.fitted_in_geno_func_list:
+            if not func(chromosome):
+
+                fitted = False
+                break
+
         return fitted
 
     @classmethod
