@@ -5,6 +5,7 @@ from enum import Enum
 
 light_parameter = 0
 
+
 # to control function (chromosome to chromosome)
 class BinaryGeneric(object):
 
