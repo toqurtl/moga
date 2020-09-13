@@ -65,7 +65,7 @@ class Fronting(object):
                     dominated = dominated and not np.sum(objective_1 == objective_2) == cls.num_objective
                     if dominated:
                         num_dominates += 1
-                if num_dominates is 0:
+                if num_dominates == 0:
                     new_front.append((chromosome_1, objective_1))
             for chromosome_1, objective_1 in new_front:
                 not_fronted_chromosome_list.remove((chromosome_1, objective_1))
