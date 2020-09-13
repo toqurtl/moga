@@ -3,6 +3,7 @@ import random
 from functools import reduce
 from enum import Enum
 
+light_parameter = 0
 
 # to control function (chromosome to chromosome)
 class BinaryGeneric(object):
@@ -52,12 +53,19 @@ class BinaryGeneric(object):
 
 
 class BinaryLocalAlgorithm(Enum):
-
     # best value is ndarray
+
+    @classmethod
+    def get_light_parameter(cls):
+        return light_parameter
+
     @classmethod
     def local_algorithm_lk(cls, chro_str, func):
         best_chro, best_value = chro_str, func(chro_str)
         for idx in range(0, len(chro_str)):
+            if light_parameter < random.uniform(0, 1):
+                continue
+
             new_chro = BinaryGeneric.change_ith_gene(chro_str, idx)
             if BinaryChromosome.chromosome_fitted_in_geno_space(new_chro):
                 new_value = func(new_chro)
