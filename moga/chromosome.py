@@ -132,7 +132,7 @@ class BinaryChromosome(object):
         return check
 
     @classmethod
-    def chromosome_fitted_in_geno_space(cls, chromosome):
+    def chromosome_fitted_in_geno_space(cls, chromosome, new_generation=[]):
         fitted = True
         for key, elements in cls.geno_position.items():
             min_value = cls.geno_shape[key]['min'] + cls.geno_shape[key]['offspring']
@@ -149,8 +149,7 @@ class BinaryChromosome(object):
                 break
 
         for func in cls.fitted_in_geno_func_list:
-            if not func(chromosome):
-
+            if not func(chromosome, new_generation):
                 fitted = False
                 break
 

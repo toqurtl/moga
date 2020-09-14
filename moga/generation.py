@@ -102,6 +102,7 @@ def fill_chromosome_list(func):
         chromosome_info_list = []
         chromosome_list = []
         num_chromosome, new_generation = args[1], args[2]
+        print(new_generation)
         local_algorithm, fitness_func = args[0].local_algorithm_enum, args[0].fitness_func
         new_generation_list = np.array(new_generation).T[0].tolist()
         while len(chromosome_list) < num_chromosome:
@@ -111,7 +112,7 @@ def fill_chromosome_list(func):
                 continue
             if new_chromosome in chromosome_list:
                 continue
-            if not BinaryChromosome.chromosome_fitted_in_geno_space(new_chromosome):
+            if not BinaryChromosome.chromosome_fitted_in_geno_space(new_chromosome, new_generation):
                 continue
             chromosome_info_list.append((new_chromosome, objective_values))
             chromosome_list.append(new_chromosome)
