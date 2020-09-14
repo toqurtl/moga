@@ -2,6 +2,7 @@ from .chromosome import BinaryChromosome
 from .generation import Fronting
 import numpy as np
 import time
+import pickle
 
 
 class ParetoOptimizer(object):
@@ -25,13 +26,16 @@ class ParetoOptimizer(object):
         self.max_generation = max_generation
         self.num_objective = num_objective
 
-    def optimize(self):
+    def optimize(self, file_path=None):
         self.initialization()
         for idx in range(0, self.max_generation):
             start_time = time.time()
-            print(idx)
+            print(idx, idx, 'th generation is saved at', file_path)
             self.next_generation()
             self.time_measure_list.append(time.time()-start_time)
+            if file_path is not None:
+                with open(file_path, 'wb') as f:
+                    pickle.dump(self.get_generation_dict(), f, pickle.HIGHEST_PROTOCOL)
 
     def initialization(self):
         num = self.num_chromosome_in_generation
@@ -49,3 +53,14 @@ class ParetoOptimizer(object):
         new_generation_info = Fronting.get_survived_chromosome(self.num_chromosome_in_generation)
         self.generation_list.append(new_generation_info)
         return new_generation_info
+
+    def get_generation_dict(self, milestone=0):
+        generation_dict = {}
+        generation_list = self.generation_list
+        for idx, generation in enumerate(generation_list):
+            if idx != 0:
+                num = idx + milestone
+                time = self.time_measure_list[idx-1]
+                generation_dict[num] = (num, generation, time)
+        return generation_dict
+

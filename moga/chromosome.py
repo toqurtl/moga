@@ -152,7 +152,6 @@ class BinaryChromosome(object):
             if not func(chromosome, new_generation):
                 fitted = False
                 break
-
         return fitted
 
     @classmethod
