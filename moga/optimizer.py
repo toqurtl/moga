@@ -29,8 +29,8 @@ class ParetoOptimizer(object):
         self.max_generation = max_generation
         self.num_objective = num_objective
 
-    def optimize(self, file_path=None):
-        self.initialization()
+    def optimize(self, file_path=None, generation=None):
+        self.initialization(generation=generation)
         for idx in range(0, self.max_generation):
             start_time = time.time()
             print(idx, idx, 'th generation is saved at', file_path)
