@@ -1,3 +1,6 @@
+from _cython_0_29_16 import generator
+from numpy import generic
+
 from .chromosome import BinaryChromosome
 from .generation import Fronting
 import numpy as np
@@ -37,7 +40,11 @@ class ParetoOptimizer(object):
                 with open(file_path, 'wb') as f:
                     pickle.dump(self.get_generation_dict(), f, pickle.HIGHEST_PROTOCOL)
 
-    def initialization(self):
+    def initialization(self, generation=None):
+        if generation is not None:
+            self.generation_list.append(generation)
+            return
+
         num = self.num_chromosome_in_generation
         chromosome_list = BinaryChromosome.get_random_chromosome_from_geno_shape(num)
         local_optimized_chromosome_list = []
