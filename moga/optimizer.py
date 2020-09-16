@@ -1,6 +1,3 @@
-from _cython_0_29_16 import generator
-from numpy import generic
-
 from .chromosome import BinaryChromosome
 from .generation import Fronting
 import numpy as np
