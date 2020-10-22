@@ -27,10 +27,10 @@ class ParetoOptimizer(object):
         self.num_objective = num_objective
 
     def optimize(self, file_path=None, generation=None):
+
         self.initialization(generation=generation)
         for idx in range(0, self.max_generation):
             start_time = time.time()
-            print(idx, idx, 'th generation is saved at', file_path)
             self.next_generation()
             self.time_measure_list.append(time.time()-start_time)
             if file_path is not None:
@@ -55,6 +55,7 @@ class ParetoOptimizer(object):
         new_generation_info = self.generation_generator.get_new_generation(self.num_chromosome_in_generation * 2)
         Fronting.fronting(new_generation_info)
         new_generation_info = Fronting.get_survived_chromosome(self.num_chromosome_in_generation)
+
         self.generation_list.append(new_generation_info)
         return new_generation_info
 

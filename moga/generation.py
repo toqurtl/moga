@@ -4,10 +4,11 @@ from .exception import HyperParameterSettingError
 import random
 import numpy as np
 from enum import Enum
+import time
 
 
 class Fronting(object):
-    num_objective = 0
+    num_objective = 2
     max_objective_list = []
     min_objective_list = []
     front_list = []
@@ -42,6 +43,7 @@ class Fronting(object):
         cls.max_objective_list = []
         cls.min_objective_list = []
         cls.front_list.clear()
+
 
     @classmethod
     # generation is the list contains chromosome information as tuple
@@ -104,15 +106,19 @@ def fill_chromosome_list(func):
         num_chromosome, new_generation = args[1], args[2]
         local_algorithm, fitness_func = args[0].local_algorithm_enum, args[0].fitness_func
         new_generation_list = np.array(new_generation).T[0].tolist()
+
         while len(chromosome_list) < num_chromosome:
             new_chromosome = func(*args)
-            new_chromosome, objective_values = local_algorithm(new_chromosome, fitness_func)
+            time_1 = time.time()
             if new_chromosome in new_generation_list:
                 continue
             if new_chromosome in chromosome_list:
                 continue
             if not BinaryChromosome.chromosome_fitted_in_geno_space(new_chromosome, new_generation):
                 continue
+            time_2 = time.time()
+            new_chromosome, objective_values = local_algorithm(new_chromosome, fitness_func)
+            time_3 = time.time()
             chromosome_info_list.append((new_chromosome, objective_values))
             chromosome_list.append(new_chromosome)
         return chromosome_info_list
@@ -153,9 +159,14 @@ class MultiObjectiveGenerator(object):
 
     def get_new_generation(self, num_chromosome_in_generation):
         new_generation = []
+        time_list = []
         for generic_function, generic_ratio in self.generic_parameter_dict.items():
+            time_1 = time.time()
             num = int(generic_ratio * num_chromosome_in_generation)
             new_generation += generic_function(self, num, new_generation)
+            time_2 = time.time()
+            time_list.append(time_2-time_1)
+
         return np.array(new_generation)
 
     def superior(self, num_chromosome, new_generation):
